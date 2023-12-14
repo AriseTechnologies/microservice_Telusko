@@ -1,0 +1,51 @@
+******************** MicroService Theory *********************** (Telusko)
+
+-> break whole application into separate modules/services
+-> instead of monolithic --> micro services
+-> we need to scale entire application instead of single service. In case of Sale on Amazon, we need to scale some services like payment/search.
+-> for monolithic we have to stick to only one technology e.g. Java. For micr service architecture we can create different services using different technologies
+-> each services is individual, should deploy separatly, scaled separatly(one service we have 10 instance, and other can have 2 instances)
+-> if any one service go down, it doesn't affect whole application
+
+-> How different services communicate?
+-> before going for micro services, need to design proper architecture of monolithic application to convert to micro services
+-> security?
+
+
+	======>  Project : Quiz Application
+
+		Quiz (service)				Question (service)
+		createQuiz					add
+		get							remove
+		getScore					update
+									read
+									
+
+-> we will have separate DB for separate services
+-> We need : API Gateway
+			 Load Balancer
+			 Service Registry
+			 Failed Fast to manage if somthing went wrong
+			 Circuit breacker
+			 
+-> once we create a service, we can create multiple instances of that service.
+	Eclipse -> Run Configuration -> Java Application (as we are running springboot app in java app) -> create copy of existing config ->                          " -Dserver.port=8081 " -> apply
+	
+-> this way we can run another instance of a service on other port
+
+
+==> to call one service from other : 
+			1. we need url (e.g: http://localhost:8080/question/getScore)
+			2. we can use RestTemplate to call -> but in case of multiple instances we have different ports and localhost
+			
+			==> openFeign/ Feign client is used to communicate between multiple services, we can call using service name
+			==> we also need Service discovery to discover other service which we need to call, for that we ned a specific server => Eureka Server
+			==> Eureka Server  => All services need to register themselves to this eureka server. so one service can search other from Eureka server using Eureka client
+			==> create separate project for Eureka server and add @EnableEurekaServer annotation on main class .
+				Also need to add in application.properties -> 
+						spring.application.name = service-registry
+						server.port = 8761
+						eureka.instance.hostname=localhost
+						eureka.client.fetch-registry=false
+						eureka.client.register-with-eureka=false
+						
