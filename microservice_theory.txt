@@ -40,7 +40,9 @@
 			
 			==> openFeign/ Feign client is used to communicate between multiple services, we can call using service name
 			==> we also need Service discovery to discover other service which we need to call, for that we ned a specific server => Eureka Server
-			==> Eureka Server  => All services need to register themselves to this eureka server. so one service can search other from Eureka server using Eureka client
+			==> Eureka Server  => All services need to register themselves to this eureka server. so one service can search other from Eureka server using
+			
+==> Eureka client (http://localhost:8761/)
 			==> create separate project for Eureka server and add @EnableEurekaServer annotation on main class .
 				Also need to add in application.properties -> 
 						spring.application.name = service-registry
@@ -48,4 +50,90 @@
 						eureka.instance.hostname=localhost
 						eureka.client.fetch-registry=false
 						eureka.client.register-with-eureka=false
-						
+			=> we can register the service to Eureka by adding Netflix Eureka client dependency in pom.xml	
+			=> we can see all registered services under Instance registered with Eureka tab => if 2 instances, will show 2 instances here
+			
+==> Feign Client:
+
+			==> Add dependency for Feign
+			==> Annotate @FeignClients("service-name) on created Feign class
+			==> @EnableFeignClient on main class
+			==> 
+			
+==> Load Balancer
+			==> As we can scale any service in multiple instances, then which instance to choose based on availability is done by Load balancer
+			==> We have by default Load Balancer when we add dependency for spring cloud (i.e. Eureka)
+			==> Feign Client will automatically do this load balance
+			==> To test which service is running (i.e. if we have ran on different port), add Enviroment and print it with 
+						=> sysout(environment.getProperty("local.server.port")
+
+API Gateway:
+			==> create new project for Gateway
+			==> Multiple users (Web/mobile) are looking at application as a whole instead of multiple micro services
+			==> So this is a single entry point for our application
+			==> Gateway also has to register themself with Eureka client
+			==> add dependency for Gateway
+			==> API Gateway url : http://localhost:8765/quiz-service/quiz/allQuestions/1 (Here, 8765 is Gateway port, calling the Quiz service)
+			
+			
+			
+http://localhost:8080/question/allQuestions
+http://localhost:8080/question/add
+		
+    {
+        "id":1,
+        "questionTitle": "Which java keyword is used to crate a subclass",
+        "option1": "class",
+        "option2": "interface",
+        "option3": "extends",
+        "option4": "implements",
+        "rightAnswer":"extends",
+        "difficultylevel":"easy",
+        "category":"Java"
+    }
+			
+			
+http://localhost:8080/question/category/Java
+http://localhost:8080/question/getQuestions
+http://localhost:8080/question/category/SQL
+http://localhost:8080/question/generate?categotyName=Java&numOfQues=2
+http://localhost:8080/question/getScore
+
+	[
+    {
+        "id":1,
+        "response":"compareTo"
+    },
+    {
+        "id":2,
+        "response":"interface"
+    },
+    {
+        "id":1,
+        "response":"insert"
+    }
+]
+
+
+http://localhost:8090/quiz/create
+	
+    {
+        "categoryName":"Java",
+        "numQuestions": 2,
+        "title":"Quiz 1"
+    }
+http://localhost:8090/quiz/allQuestions/1
+
+http://localhost:8090/quiz/submit/1
+		
+   [
+    {
+        "id":1,
+        "response": "compareTo"
+    },
+    {
+        "id":2,
+        "response": "compaeTo"
+    }
+   ]
+http://localhost:8765/quiz-service/quiz/allQuestions/1
